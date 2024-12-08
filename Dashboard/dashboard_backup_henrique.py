@@ -59,6 +59,8 @@ app.layout = html.Div([
     # Gráficos
     html.Div([
         dcc.Graph(id='keyword-bar-chart', style={'height': '50vh'}),
+        dcc.Graph(id='wordcloud-chart', style={'height': '50vh'}),
+        dcc.Graph(id='keyword-trend-chart', style={'height': '50vh'})
     ])
 ])
 
@@ -80,6 +82,42 @@ def update_bar_chart(selected_year):
 
     fig = px.bar(x=keywords, y=frequencies, labels={'x': 'Mots Clés', 'y': 'Fréquence'},
                  title=f'Les 10 mots-clés les plus utilisés en {selected_year}')
+    return fig
+
+# Callback para atualizar a nuvem de palavras
+@app.callback(
+    Output('wordcloud-chart', 'figure'),
+    [Input('year-dropdown', 'value')]
+)
+def update_wordcloud(selected_year):
+    if selected_year == 'all':
+        year_keywords = combined_keywords
+    else:
+        year_keywords = combined_yearly_data.get(selected_year, {}).get("kws", {})
+    
+    wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(year_keywords)
+    fig = px.imshow(wordcloud, title=f'Nuage de mots en {selected_year}')
+    fig.update_xaxes(visible=False).update_yaxes(visible=False)
+    return fig
+
+# Callback para atualizar o gráfico de tendências
+@app.callback(
+    Output('keyword-trend-chart', 'figure'),
+    [Input('year-dropdown', 'value')]
+)
+def update_trend_chart(selected_year):
+    if selected_year == 'all':
+        year_keywords = combined_keywords
+    else:
+        year_keywords = combined_yearly_data.get(selected_year, {}).get("kws", {})
+    
+    sorted_keywords = sorted(year_keywords.items(), key=lambda x: x[1], reverse=True)
+    top_keywords = sorted_keywords[:10]
+    keywords = [keyword for keyword, _ in top_keywords]
+    frequencies = [freq for _, freq in top_keywords]
+
+    fig = px.line(x=keywords, y=frequencies, labels={'x': 'Mots Clés', 'y': 'Fréquence'},
+                  title=f'Les 10 principales tendances en matière de mots-clés {selected_year}')
     return fig
 
 if __name__ == '__main__':
