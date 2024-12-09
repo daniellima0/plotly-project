@@ -38,8 +38,6 @@ def aggregate_all_keywords(yearly_data):
             all_keywords[keyword] = all_keywords.get(keyword, 0) + freq
     return all_keywords
 
-
-
 # Prepare data for keyword growth over months graph
 keywords = [
     'pays', 'russie', 'russe', 'afrique', 'président',
@@ -140,42 +138,65 @@ combined_keywords = aggregate_all_keywords(combined_yearly_data)
 years = ['all'] + sorted(combined_yearly_data.keys())
 
 app.layout = html.Div([
-    html.H1("Dashboard Projet Plotly Python - DATA 732"),
+    html.H1("Dashboard Projet Plotly Python - DATA 732", style={'textAlign': 'center', 'color': '#2a3f5f', 'font-size': '36px'}),
 
-    # Dropdown for year selection
-    dcc.Dropdown(
-        id='year-dropdown',
-        options=[{'label': year, 'value': year} for year in years],
-        value='all',
-        style={'width': '50%'}
-    ),
-
-    # Bar chart
-    html.Div([ 
-        dcc.Graph(id='keyword-bar-chart', style={'height': '50vh'}), 
-    ]),
-    # Line chart showing keyword growth over months
-    html.Div([ 
-        dcc.Graph(
-            id='keyword-growth-graph',
-            figure={
-                'data': data_for_graph,
-                'layout': go.Layout(
-                    title="Keyword Growth Over Months (Old and Recent Data)",
-                    xaxis={'title': 'Month', 'tickangle': 45},
-                    yaxis={'title': 'Keyword Count'},
-                    showlegend=True
-                )
-            },
-            style={'height': '50vh'}
+    # Dropdown for year selection with explanation
+    html.Div([
+        html.P("Selecione o ano para filtrar os gráficos de barres:", style={'font-size': '16px', 'color': '#555'}),
+        dcc.Dropdown(
+            id='year-dropdown',
+            options=[{'label': year, 'value': year} for year in years],
+            value='all',
+            style={'width': '48%', 'margin': 'auto'}
         ),
-    ]),
+    ], style={'textAlign': 'center', 'margin-bottom': '30px'}),
 
-    # Heatmap
-    html.Div([ 
-        dcc.Graph(id='keyword-heatmap', style={'height': '50vh'}),
-    ]),
+    # Main Content Layout - 2x2 Grid
+    html.Div([
+        # First Graph: Bar Chart
+        html.Div([
+            html.H3("Mots Clés les Plus Utilisés", style={'textAlign': 'center', 'color': '#4CAF50'}),
+            dcc.Graph(id='keyword-bar-chart', style={'height': '60vh'}),
+        ], style={'border': '2px solid #4CAF50', 'border-radius': '8px', 'padding': '20px'}),
+
+        # Second Graph: Line Chart
+        html.Div([
+            html.H3("Croissance des mots-clés", style={'textAlign': 'center', 'color': '#f39c12'}),
+            dcc.Graph(
+                id='keyword-growth-graph',
+                figure={
+                    'data': data_for_graph,
+                    'layout': go.Layout(
+                        title="Croissance des mots-clés par Mois (Ancien et Données récentes)",
+                        xaxis={'title': 'Mois', 'tickangle': 45},
+                        yaxis={'title': 'Fréquence des mots-clés'},
+                        showlegend=True
+                    )
+                },
+                style={'height': '50vh'}
+            ),
+        ], style={'border': '2px solid #f39c12', 'border-radius': '8px', 'padding': '20px'}),
+
+        # Third Graph: Heatmap
+        html.Div([
+            html.H3("Matrice de Corrélation des Mots-Clés", style={'textAlign': 'center', 'color': '#3498db'}),
+            dcc.Graph(id='keyword-heatmap', style={'height': '100%'}),
+        ], style={'border': '2px solid #3498db', 'border-radius': '8px', 'padding': '20px'}),
+
+        # Fourth Graph: Placeholder or Custom Graph
+        html.Div([
+            html.H3("Placeholder for Additional Graph", style={'textAlign': 'center', 'color': '#e74c3c'}),
+            dcc.Graph(id='additional-graph', style={'height': '60vh'}),
+        ], style={'border': '2px solid #e74c3c', 'border-radius': '8px', 'padding': '20px'}),
+    ], style={
+        'display': 'grid',
+        'grid-template-columns': '1fr 1fr',  # Two columns
+        'gap': '10px',  # Gap between rows and columns
+        'width': '90%',
+        'margin': 'auto'
+    })
 ])
+
 
 # Callback for bar chart
 @app.callback(
@@ -187,14 +208,15 @@ def update_bar_chart(selected_year):
         year_keywords = combined_keywords
     else:
         year_keywords = combined_yearly_data.get(selected_year, {}).get("kws", {})
-    
+
     sorted_keywords = sorted(year_keywords.items(), key=lambda x: x[1], reverse=True)
     top_keywords = sorted_keywords[:10]
     keywords = [keyword for keyword, _ in top_keywords]
     frequencies = [freq for _, freq in top_keywords]
 
     fig = px.bar(x=keywords, y=frequencies, labels={'x': 'Mots Clés', 'y': 'Fréquence'},
-                 title=f'Les 10 mots-clés les plus utilisés en {selected_year}')
+                 title=f'Les 10 mots-clés les plus utilisés en {selected_year}', color=frequencies,
+                 color_continuous_scale='Viridis')
     return fig
 
 # Callback for heatmap
@@ -217,9 +239,9 @@ def update_heatmap(selected_year):
     ))
 
     fig.update_layout(
-        title="Pearson Correlation Matrix of Top 10 Keyword Co-occurrences",
-        xaxis_title="Keywords",
-        yaxis_title="Keywords",
+        title="Matrice de Corrélation des Mots-Clés",
+        xaxis_title="Mots-Clés",
+        yaxis_title="Mots-Clés",
         width=800,
         height=800
     )
