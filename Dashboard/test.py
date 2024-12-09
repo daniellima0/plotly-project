@@ -4,8 +4,9 @@ import json
 with open('../Données-20241108/fr.sputniknews.africa--20221101--20221231/fr.sputniknews.africa--20221101--20221231.json', 'r') as file:
     old_data = json.load(file)
 
-with open('../Données-20241108/fr.sputniknews.africa--20220630--20230630/fr.sputniknews.africa--20220630--20230630.json', 'r') as file:
-    recent_data = json.load(file)
+# with open('../Données-20241108/fr.sputniknews.africa--20220630--20230630/fr.sputniknews.africa--20220630--20230630.json', 'r') as file:
+#     recent_data = json.load(file)
     
-print("old_data\n", old_data["data"]["2022"]["12"]["1"][0]["kws"])
+print("old_data\n", old_data["metadata"]["month"]["2022"]["12"]["kws"])
 # print("recent_data\n", recent_data["metadata"]["year"]["2022"]["kws"]["pays"])
+
