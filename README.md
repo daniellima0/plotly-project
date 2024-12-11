@@ -97,7 +97,7 @@ data
 ![Bar Chart](Screenshots/bar_chart.jpeg)
 
 ### Correlation Matrix
-![Correlation Matrix](screenshots/correlation_matrix.jpeg)
+![Correlation Matrix](Screenshots/correlation_matrix.jpeg)
 
 ### Line Chart
 ![Line Chart](Screenshots/temporal_analysis.jpeg)
