@@ -91,9 +91,22 @@ data
 4. **Explore Initial Graphics:**
    - Run the scripts in `Les Premiers Graphiques` for preliminary visualizations.
 
+## Screenshots
+
+### Bar Chart
+![Bar Chart](Screenshots/bar_chart.jpeg)
+
+### Correlation Matrix
+![Correlation Matrix](screenshots/correlation_matrix.jpeg)
+
+### Line Chart
+![Line Chart](Screenshots/temporal_analysis.jpeg)
+
+### Location Map
+![Location Map](Screenshots/location_map.jpeg)
+
 ## Contributions
 Feel free to fork the repository and submit pull requests for improvements or additional features.
 
 ## License
 This project is licensed under [MIT License](LICENSE).
-
